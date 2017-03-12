@@ -1,0 +1,98 @@
+﻿@model Order
+
+@{
+    ViewBag.Title = "Order Detail";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(m => m.EventDay.Name)</dt>
+        <dd>@Html.ActionLink(Html.DisplayFor(m => m.EventDay.Name).ToHtmlString(), "Details", "EventDays", new { id = Model.EventDayID }, null)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.TakenByID)</dt>
+        <dd>@Html.DisplayFor(m => m.TakenBy.FullName)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.CustomerName)</dt>
+        <dd>@Html.DisplayFor(m => m.CustomerName)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Locality)</dt>
+        <dd>@Html.DisplayFor(m => m.Locality)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Email)</dt>
+        <dd>@Html.DisplayFor(m => m.Email)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.AccountNo)</dt>
+        <dd>@Html.DisplayFor(m => m.AccountNo)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Notes)</dt>
+        <dd>@Html.DisplayFor(m => m.Notes)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.PaymentMethod)</dt>
+        <dd>@System.Text.RegularExpressions.Regex.Replace(Model.PaymentMethod.ToString(), "(\\B[A-Z])", " $1")</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Vouchers)</dt>
+        <dd>@Html.DisplayFor(m => m.Vouchers)</dd>
+    </dl>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Stock Code</th>
+                    <th>Description</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-right">Unit Price</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderItems.OrderBy(o => o.ID))
+                {
+                    <tr>
+                        <td>@Html.ActionLink(Html.DisplayFor(m => item.StockCode).ToHtmlString(), "Details", "Products", new { id = item.ProductID }, null)</td>
+                        <td>@Html.DisplayFor(m => item.Description)</td>
+                        <td class="text-center">@Html.DisplayFor(m => item.Quantity)</td>
+                        <td class="text-right">@Html.DisplayFor(m => item.UnitPrice)</td>
+                        <td class="text-right">@((item.Quantity * item.UnitPrice).ToString("£#,##0.00"))</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                @if (Model.Vouchers > 0)
+                {
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right"><strong>Sub Total:</strong></td>
+                        <td class="text-right"><strong>@(((double)ViewBag.TotalValue).ToString("£#,##0.00"))</strong></td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right"><strong>Less amount paid by vouchers:</strong></td>
+                        <td class="text-right"><strong>@Html.DisplayFor(m => m.Vouchers)</strong></td>
+                    </tr>
+                }
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right"><strong>Total Payable:</strong></td>
+                    <td class="text-right"><strong>@((((decimal)ViewBag.TotalValue) - Model.Vouchers).ToString("£#,##0.00"))</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Delete", "Delete", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index", new { eventDayID = ViewBag.EventDayID }) |
+    @Html.ActionLink("Create New", "Create", new { eventDayID = ViewBag.EventDayID })
+</p>

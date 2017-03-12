@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Consignment>
+
+@{
+    ViewBag.Title = "Consignments";
+}
+
+<h2>Consignments</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">@Html.DisplayNameFor(m => m.ID)</th>
+            <th class="text-center">@Html.DisplayNameFor(m => m.DispatchDate)</th>
+            <th>@Html.DisplayNameFor(m => m.Campus)</th>
+            <th>@Html.DisplayNameFor(m => m.Locality)</th>
+            <th>@Html.DisplayNameFor(m => m.ContactName)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="text-center">@Html.ActionLink(Html.DisplayFor(m => item.ID).ToHtmlString(), "Details", new { id = item.ID })</td>
+                <td class="text-center">@Html.DisplayFor(m => item.DispatchDate)</td>
+                <td>@Html.DisplayFor(m => item.Campus)</td>
+                <td>@Html.DisplayFor(m => item.Locality)</td>
+                <td>@Html.DisplayFor(m => item.ContactName)</td>
+            </tr>
+        }
+    </tbody>
+</table>

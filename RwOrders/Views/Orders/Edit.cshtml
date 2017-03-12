@@ -1,0 +1,264 @@
+﻿@model OrderViewModel
+
+@{
+    ViewBag.Title = "Edit Order";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div ng-app="app" ng-controller="OrderController">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(m => m.ID)
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CustomerName, htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(m => m.CustomerName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(m => m.CustomerName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Locality, htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(m => m.Locality, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(m => m.Locality, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Email, htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.EmailConfirmation, htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(m => m.EmailConfirmation, true)
+                                Yes
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(m => m.EmailConfirmation, false)
+                                No
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.AccountNo, htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(m => m.AccountNo, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(m => m.AccountNo, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Notes, htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.TextAreaFor(m => m.Notes, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Notes, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PaymentMethod, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            <div class="radio">
+                                <label>
+                                    @Html.RadioButtonFor(m => m.PaymentMethod, PaymentMethod.Cash)
+                                    Cash
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    @Html.RadioButtonFor(m => m.PaymentMethod, PaymentMethod.Cheque)
+                                    Cheque
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    @Html.RadioButtonFor(m => m.PaymentMethod, PaymentMethod.Card)
+                                    Card
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    @Html.RadioButtonFor(m => m.PaymentMethod, PaymentMethod.VouchersOnly)
+                                    Vouchers Only
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    @Html.RadioButtonFor(m => m.PaymentMethod, PaymentMethod.Account)
+                                    Account
+                                </label>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.PaymentMethod, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Vouchers, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.EditorFor(m => m.Vouchers, new { htmlAttributes = new { @class = "form-control", style = "max-width:120px" } })
+                            @Html.ValidationMessageFor(m => m.Vouchers, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label for="barcode">Scan barcode</label>
+                            <input type="text" class="form-control" id="barcode" ng-keypress="barcodeKeys($event)" ng-model="barcode" capitalize @*ng-enter="findBarcode()"*@ placeholder="Barcode..." />
+                            <button type="button" class="btn btn-success" ng-click="findBarcode()">Find</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Stock Code</th>
+                                    <th>Description</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-right">Unit Price</th>
+                                    <th class="text-right">Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr ng-repeat="item in items" ng-cloak>
+                                    <td>
+                                        <input type="hidden" name="OrderItems.Index" value="{{$index}}" />
+                                        <input type="hidden" name="OrderItems[{{$index}}].ProductID" value="{{item.ProductID}}" />
+                                        <input type="hidden" name="OrderItems[{{$index}}].StockCode" value="{{item.StockCode}}" />
+                                        {{item.StockCode}}
+                                    </td>
+                                    <td>
+                                        <input type="hidden" name="OrderItems[{{$index}}].Description" value="{{item.Description}}" />
+                                        {{item.Description}}
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="hidden" name="OrderItems[{{$index}}].Quantity" value="{{item.Quantity}}" />
+                                        {{item.Quantity}}
+                                    </td>
+                                    <td class="text-right">
+                                        <input type="hidden" name="OrderItems[{{$index}}].UnitPrice" value="{{item.UnitPrice}}" />
+                                        {{item.UnitPrice | currency:"£"}}
+                                    </td>
+                                    <td class="text-right">
+                                        {{item.Quantity * item.UnitPrice | currency:"£"}}
+                                    </td>
+                                    <td>
+                                        <a href="" ng-click="editItem(item)">Edit</a> |
+                                        <a href="" ng-click="deleteItem(item)">Delete</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th class="text-right">{{orderTotal() | currency:"£"}}</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save Order" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        @Html.ActionLink("Cancel edit", "Details", new { id = Model.ID })
+    </div>
+
+    <div class="modal fade" id="editItem" tabindex="-1" role="dialog" aria-labelledby="editItem-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="modal-content" ng-submit="saveEditedItem()">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="editItem-label">Edit Item</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Stock Code</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{currentItem.StockCode}}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Description</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{currentItem.Description}}</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="editQuantity">Quantity</label>
+                            <div class="col-md-9">
+                                <input type="number" class="form-control" id="editQuantity" ng-model="tempItem.Quantity" min="1" style="max-width:80px" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Unit Price</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="editUnitPrice" ng-model="tempItem.UnitPrice" min="0" step="0.01" style="max-width:80px" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Total</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{tempItem.Quantity * tempItem.UnitPrice | currency:"£"}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/angularjs")
+    <script src="~/Scripts/App/Orders/Edit.js"></script>
+    <script>
+        app.value("preloadItems", @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.OrderItems.OrderBy(i => i.ID))));
+    </script>
+}

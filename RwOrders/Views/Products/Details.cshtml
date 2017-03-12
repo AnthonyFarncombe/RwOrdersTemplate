@@ -1,0 +1,65 @@
+﻿@model Product
+
+@{
+    ViewBag.Title = "Product Details";
+    List<ProductOrderViewModel> orders = ViewBag.Orders;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model.Inactive)
+{
+    <div class="alert alert-danger" role="alert">INACTIVE! This product has been marked inactive.</div>
+}
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(m => m.StockCode)</dt>
+        <dd>@Html.DisplayFor(m => m.StockCode)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Description)</dt>
+        <dd>@Html.DisplayFor(m => m.Description)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.UnitPrice)</dt>
+        <dd>@Html.DisplayFor(m => m.UnitPrice)</dd>
+    </dl>
+</div>
+
+<p>
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) @:|
+        @Html.ActionLink("Delete", "Delete", new { id = Model.ID }) @:|
+    }
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+@if (orders.Count > 0)
+{
+    <table class="table table-hover table table-striped">
+        <thead>
+            <tr>
+                <th class="text-center">Date</th>
+                <th>Event</th>
+                <th>Customer</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-right">Unit Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr>
+                    <td class="text-center">@Html.DisplayFor(m => order.EventDate)</td>
+                    <td>@Html.DisplayFor(m => order.EventName)</td>
+                    <td>@Html.DisplayFor(m => order.CustomerName)</td>
+                    <td class="text-center">@Html.DisplayFor(m => order.Quantity)</td>
+                    <td class="text-right">@Html.DisplayFor(m => order.UnitPrice)</td>
+                    <td>@Html.ActionLink("View", "Details", "Orders", new { id = order.ID }, null)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

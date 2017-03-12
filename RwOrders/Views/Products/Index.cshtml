@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewBag.Title = "Products";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create") |
+        @Html.ActionLink("Import", "Import")
+    </p>
+}
+
+<table class="table table-striped table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.StockCode)</th>
+            <th>@Html.DisplayNameFor(m => m.Description)</th>
+            <th class="text-right">@Html.DisplayNameFor(m => m.UnitPrice)</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.OrderBy(p => p.StockCode))
+        {
+            <tr>
+                <td>@Html.ActionLink(Html.DisplayFor(m => item.StockCode).ToHtmlString(), "Details", new { id = item.ID })</td>
+                <td>@Html.DisplayFor(m => item.Description)</td>
+                <td class="text-right">@Html.DisplayFor(m => item.UnitPrice)</td>
+            </tr>
+        }
+    </tbody>
+</table>

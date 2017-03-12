@@ -1,0 +1,194 @@
+﻿@model Consignment
+
+@{
+    ViewBag.Title = Html.DisplayFor(m => m.ID).ToHtmlString() + " - Consignment Details";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div ng-app="app" ng-controller="ConsignmentController">
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>@Html.DisplayNameFor(m => m.DispatchDate)</dt>
+                <dd>@Html.DisplayFor(m => m.DispatchDate)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Campus)</dt>
+                <dd>@Html.DisplayFor(m => m.Campus)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Locality)</dt>
+                <dd>@Html.DisplayFor(m => m.Locality)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.ContactName)</dt>
+                <dd>@Html.DisplayFor(m => m.ContactName)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Email)</dt>
+                <dd>@Html.DisplayFor(m => m.Email)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.ReturnBy)</dt>
+                <dd>@Html.DisplayFor(m => m.ReturnBy)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.AttentionOf)</dt>
+                <dd>@Html.DisplayFor(m => m.AttentionOf)</dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>@Html.DisplayNameFor(m => m.CompanyName)</dt>
+                <dd>@Html.DisplayFor(m => m.CompanyName)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Street1)</dt>
+                <dd>@Html.DisplayFor(m => m.Street1)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Street2)</dt>
+                <dd>@Html.DisplayFor(m => m.Street2)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Town)</dt>
+                <dd>@Html.DisplayFor(m => m.Town)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.County)</dt>
+                <dd>@Html.DisplayFor(m => m.County)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Postcode)</dt>
+                <dd>@Html.DisplayFor(m => m.Postcode)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Country)</dt>
+                <dd>@Html.DisplayFor(m => m.Country)</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline" ng-submit="submitBarcode()">
+                <p>
+                    <div class="form-group">
+                        <strong>Scan Barcode:</strong>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="barcode" ng-model="barcode" capitalize autofocus autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </div>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div class="row" ng-cloak>
+        <div class="col-m-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Stock Code</th>
+                        <th>Description</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-right">Unit Price</th>
+                        <th class="text-right">Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in items">
+                        <td>{{item.StockCode}}</td>
+                        <td>{{item.Description}}</td>
+                        <td class="text-center">{{item.Quantity}}</td>
+                        <td class="text-right">{{item.UnitPrice | currency:"£"}}</td>
+                        <td class="text-right">{{item.Quantity * item.UnitPrice | currency:"£"}}</td>
+                        <td><a href="javascript:void(0)" ng-click="editItem(item)">Edit</a> | <a href="javascript:void(0)" ng-click="deleteItem(item)">Delete</a></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right"><strong>{{getTotal() | currency:"£"}}</strong></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+        @Html.ActionLink("Print", "Print", new { id = Model.ID }, new { target = "_blank" }) |
+        @Html.ActionLink("Delete", "Delete", new { id = Model.ID }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+
+    <div class="modal fade" id="editItem" tabindex="-1" role="dialog" aria-labelledby="editItem-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="modal-content" ng-submit="editItemConfirm()">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="editItem-label">Edit Item</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Stock Code</label>
+                                    <div class="col-md-9">
+                                        <p class="form-control-static">{{currentItem.StockCode}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Description</label>
+                                    <div class="col-md-9">
+                                        <input type="text" id="editDescription" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Quantity</label>
+                                    <div class="col-md-9">
+                                        <input type="number" id="editQuantity" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Unit Price</label>
+                                    <div class="col-md-9">
+                                        <input type="text" id="editUnitPrice" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteItem" tabindex="-1" role="dialog" aria-labelledby="deleteItem-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="deleteItem-label">Delete Item</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you wish to delete this item?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" ng-click="deleteItemConfirm()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/angularjs")
+    <script src="~/Scripts/App/Consignments/Details.js"></script>
+    <script>
+        var consignmentId = @Model.ID;
+    </script>
+}

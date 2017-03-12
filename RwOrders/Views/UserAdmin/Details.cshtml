@@ -1,0 +1,56 @@
+﻿@model ApplicationUser
+
+@{
+    ViewBag.Title = "User Details";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(m => m.FullName)</dt>
+        <dd>@Html.DisplayFor(m => m.FullName)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Email)</dt>
+        <dd>@Html.DisplayFor(m => m.Email)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.LastVisit)</dt>
+        <dd>@Html.DisplayFor(m => m.LastVisit)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.LastPage)</dt>
+        <dd>@Html.DisplayFor(m => m.LastPage)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.LastBrowser)</dt>
+        <dd>@Html.DisplayFor(m => m.LastBrowser)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.LastIP)</dt>
+        <dd>@Html.DisplayFor(m => m.LastIP)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.NumberOfVisits)</dt>
+        <dd>@Html.DisplayFor(m => m.NumberOfVisits)</dd>
+    </dl>
+</div>
+<h4>List of roles for this user</h4>
+@if (ViewBag.RoleNames.Count == 0)
+{
+    <hr />
+    <p>No roles found for this user.</p>
+}
+
+<table class="table">
+
+    @foreach (var item in ViewBag.RoleNames)
+    {
+        <tr>
+            <td>
+                @item
+            </td>
+        </tr>
+    }
+</table>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Delete", "Delete", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
